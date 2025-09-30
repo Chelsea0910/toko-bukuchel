@@ -1,0 +1,70 @@
+<?php
+
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\UserController; // Tambahkan ini
+// use Illuminate\Support\Facades\Route;
+
+// Halaman Home & Katalog Buku
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Authentication Routes
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
+});
+
+// Logout
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Public Book Details - Pindahkan ke atas sebelum admin routes
+Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
+
+// Admin Routes
+Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
+    // Dashboard Admin
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    
+    // Kelola Buku (CRUD)
+    Route::resource('books', BookController::class)->except(['show']);
+    
+    // Kelola Kategori (CRUD)
+    Route::resource('categories', CategoryController::class)->except(['create', 'show']);
+    
+    // Kelola Pesanan
+    Route::get('/orders', [OrderController::class, 'adminIndex'])->name('orders.index');
+    Route::put('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+});
+
+// User Routes
+Route::middleware('user')->group(function () {
+    // Dashboard User - Gunakan controller
+    Route::get('/dashboard', [UserController::class, 'dashboard'])->name('dashboard');
+    
+    // Keranjang Belanja - Gunakan prefix untuk menghindari conflict
+    Route::prefix('cart')->name('cart.')->group(function () {
+        Route::get('/', [CartController::class, 'index'])->name('index');
+        Route::post('/', [CartController::class, 'store'])->name('store');
+        Route::put('/{cart}', [CartController::class, 'update'])->name('update');
+        Route::delete('/{cart}', [CartController::class, 'destroy'])->name('destroy');
+    });
+    
+    // Pesanan - Gunakan prefix untuk menghindari conflict
+    Route::prefix('orders')->name('orders.')->group(function () {
+        Route::get('/', [OrderController::class, 'index'])->name('index');
+        Route::get('/{order}', [OrderController::class, 'show'])->name('show');
+        Route::post('/', [OrderController::class, 'store'])->name('store');
+    });
+    
+    // Pembayaran
+    Route::get('/orders/{order}/payment', [PaymentController::class, 'create'])->name('payments.create');
+    Route::post('/orders/{order}/payment', [PaymentController::class, 'store'])->name('payments.store');
+});

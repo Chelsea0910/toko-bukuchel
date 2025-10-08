@@ -147,11 +147,11 @@
                 </div>
             </div>
             <!-- PERBAIKAN PAGINATION -->
-            @if($orders->hasPages())
+            <!-- @if($orders->hasPages())
             <div class="card-footer">
                 {{ $orders->links() }}
             </div>
-            @endif
+            @endif -->
         </div>
     </div>
 </div>

@@ -67,13 +67,13 @@
                     @endforeach
 
                     <!-- PERBAIKAN PAGINATION -->
-                    @if($orders->hasPages())
+                    <!-- @if($orders->hasPages())
                     <div class="row mt-4">
                         <div class="col-12">
                             {{ $orders->links() }}
                         </div>
                     </div>
-                    @endif
+                    @endif -->
                 </div>
             </div>
         </div>
@@ -126,7 +126,7 @@
 }
 
 /* PERBAIKAN PAGINATION */
-.pagination {
+/* .pagination {
     justify-content: center;
 }
 
@@ -142,9 +142,9 @@
 }
 
 /* PERBAIKAN UKURAN TANDA PANAH */
-.pagination .page-link i.fas {
+/* .pagination .page-link i.fas {
     font-size: 0.6rem !important;
-}
+} */ */
 </style>
 
 <script>
